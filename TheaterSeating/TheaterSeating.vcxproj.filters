@@ -21,12 +21,36 @@
     <ClInclude Include="targetver.h">
       <Filter>Header Files</Filter>
     </ClInclude>
+    <ClInclude Include="Seat.h">
+      <Filter>Source Files</Filter>
+    </ClInclude>
+    <ClInclude Include="Location.h">
+      <Filter>Source Files</Filter>
+    </ClInclude>
+    <ClInclude Include="Theater.h">
+      <Filter>Source Files</Filter>
+    </ClInclude>
+    <ClInclude Include="Kiosk.h">
+      <Filter>Source Files</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="stdafx.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
     <ClCompile Include="TheaterSeating.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="Seat.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="Kiosk.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="Location.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="Theater.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
   </ItemGroup>
