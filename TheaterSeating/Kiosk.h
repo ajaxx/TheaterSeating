@@ -38,7 +38,11 @@ public:
 	/// <summary>
 	/// Shows the # of tickets sold.
 	/// </summary>
-	void showTicketsSold();
+	void showTicketsSold();	
+	/// <summary>
+	/// Shows the prices of all seats.
+	/// </summary>
+	void showPrices();
 	/// <summary>
 	/// Help the user purchase tickets.
 	/// </summary>

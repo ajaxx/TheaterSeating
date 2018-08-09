@@ -30,6 +30,16 @@ public:
 	bool isAvailable() const { return _available; }
 
 	/// <summary>
+	/// Attempts to take the seat.  If the seat is occupied then the method returns 
+	/// false.  If the seat is available, the method returns true and marks the seat 
+	/// as unavailable.
+	/// </summary>
+	/// <param name="row">The row.</param>
+	/// <param name="col">The column.</param>
+	/// <returns></returns>
+	bool tryTake();
+
+	/// <summary>
 	/// Initializes a new instance of the <see cref="Seat"/> class.
 	/// </summary>
 	Seat() : _price(0.0), _available(false) {}

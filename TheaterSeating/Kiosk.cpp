@@ -1,6 +1,7 @@
 #include "stdafx.h"
 #include "Kiosk.h"
 
+#include <iomanip>
 #include <iostream>
 #include <string>
 
@@ -25,6 +26,7 @@ void Kiosk::displayHelp() {
 	cout << "  a - Display available seating (theater-wide)." << endl;
 	cout << "  s - Display # of tickets sold." << endl;
 	cout << "  q - Display # of tickets available." << endl;
+	cout << "  p - Display the prices of all seats." << endl;
 	cout << "  x - End the session." << endl;
 	cout << "  ? - Display this message." << endl;
 	cout << endl;
@@ -46,6 +48,42 @@ void Kiosk::showSeatingByRow() {
 /// Shows the seating (all).
 /// </summary>
 void Kiosk::showSeating() {
+	// tell the user what you are doing
+	cout << endl;
+	cout << "Here is the seating chart for the theater.  Seats that are taken are represented" << endl;
+	cout << "by an * symbol, and seats that are available are represented by a # symbol." << endl;
+	cout << endl;
+
+	// table header
+	cout << "      |";
+
+	for (int col = 0; col < NCOLS; col++) {
+		cout << "  " << (col + 1);
+	}
+
+	cout << endl;
+	cout << "------+" << string(31, '-') << endl;
+
+	// table body
+	for (int row = 0; row < NROWS; row++) {
+		cout << " R " << (row + 1);
+		if (row < 9) {
+			cout << ' ';
+		}
+
+		cout << " | ";
+
+		for (int col = 0; col < NCOLS; col++) {
+			const Seat& seat = _theater.getSeat(row, col);
+			cout << " ";
+			cout << (seat.isAvailable() ? '#' : '*');
+			cout << " ";
+		}
+
+		cout << endl;
+	}
+
+	cout << endl;
 }
 
 /// <summary>
@@ -58,6 +96,49 @@ void Kiosk::showTicketsAvailable() {
 /// Shows the # of tickets sold.
 /// </summary>
 void Kiosk::showTicketsSold() {
+}
+
+/// <summary>
+/// Shows the prices of all seats.
+/// </summary>
+void Kiosk::showPrices() {
+	cout << std::fixed;
+	cout << std::setprecision(0);
+
+	// tell the user what you are doing
+	cout << endl;
+	cout << "Here are the prices for seats throughout the theater." << endl;
+	cout << endl;
+
+	// table header
+	cout << "      |";
+
+	for (int col = 0; col < NCOLS; col++) {
+		cout << string(col < 9 ? 6 : 5, ' ');
+		cout << (col + 1);
+	}
+
+	cout << endl;
+	cout << "------+" << string(70, '-') << endl;
+
+	// table body
+	for (int row = 0; row < NROWS; row++) {
+		cout << " R " << (row + 1);
+		if (row < 9) {
+			cout << ' ';
+		}
+
+		cout << " |";
+
+		for (int col = 0; col < NCOLS; col++) {
+			const Seat& seat = _theater.getSeat(row, col);
+			cout << "   $" << seat.getPrice();
+		}
+
+		cout << endl;
+	}
+
+	cout << endl;
 }
 
 /// <summary>
@@ -116,6 +197,9 @@ bool Kiosk::doUserCommand() {
 		case 'x':
 			displaySummary();
 			return false;
+		case 'p':
+			showPrices();
+			return true;
 		case '?':
 			// Do nothing.  The application will cycle back around and display the
 			// help menu to the user.
