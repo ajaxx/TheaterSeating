@@ -10,11 +10,24 @@ using namespace std;
 /// Displays the welcome message.
 /// </summary>
 void Kiosk::displayWelcomeMessage() {
+	cout << "Welcome to the Team A - Theater Seating Kiosk" << endl;
+	cout << "--------------------------------------------------" << endl;
+	cout << endl;
 }
+
 /// <summary>
 /// Displays the help message.
 /// </summary>
 void Kiosk::displayHelp() {
+	cout << "Please select an option from the list below:" << endl;
+	cout << "  b - Purchase tickets." << endl;
+	cout << "  r - Display available seating by row." << endl;
+	cout << "  a - Display available seating (theater-wide)." << endl;
+	cout << "  s - Display # of tickets sold." << endl;
+	cout << "  q - Display # of tickets available." << endl;
+	cout << "  x - End the session." << endl;
+	cout << "  ? - Display this message." << endl;
+	cout << endl;
 }
 
 /// <summary>
@@ -69,15 +82,8 @@ void Kiosk::displayInvalidOption(string option) {
 /// </summary>
 bool Kiosk::doUserCommand() {
 	// display a command prompt to the user
-	cout << "Please select an option from the list below:" << endl;
-	cout << "  b - Purchase tickets." << endl; 
-	cout << "  r - Display available seating by row." << endl;
-	cout << "  a - Display available seating (theater-wide)." << endl;
-	cout << "  s - Display # of tickets sold." << endl;
-	cout << "  q - Display # of tickets available." << endl;
-	cout << "  x - End the session." << endl;
-	cout << "  ? - Display this message." << endl;
-	cout << endl;
+	displayHelp();
+
 	cout << "Enter choice: ";
 	cout.flush();
 
@@ -109,6 +115,10 @@ bool Kiosk::doUserCommand() {
 			return true;
 		case 'x':
 			displaySummary();
+			return false;
+		case '?':
+			// Do nothing.  The application will cycle back around and display the
+			// help menu to the user.
 			return false;
 		default:
 			// We intentionally do nothing with the default case.  It will fall
