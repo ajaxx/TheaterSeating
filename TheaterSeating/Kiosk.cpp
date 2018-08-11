@@ -1,8 +1,10 @@
 #include "stdafx.h"
 #include "Kiosk.h"
+#include "Location.h"
 
 #include <iomanip>
 #include <iostream>
+#include <list>
 #include <string>
 
 using namespace std;
@@ -36,12 +38,53 @@ void Kiosk::displayHelp() {
 /// Displays the summary information.
 /// </summary>
 void Kiosk::displaySummary() {
+	// We really dont need to keep track of tickets, we just need to know which seats have
+	// been sold and how much revenue we have generated.  Lets display some summary information.
+
+	cout << "Thank you for using the theater Kiosk.  Here is a summary of your session." << endl;
+	cout << endl;
+	//cout << _theater.getAvailableSeatCount() << " seats are still available." << endl;
+	//cout << _theater.getOccupiedSeatCount() << " seats are currently occupied." << endl;
+
 }
 
 /// <summary>
 /// Shows the seating by row.
 /// </summary>
 void Kiosk::showSeatingByRow() {
+	// ask the user what row they would like to see
+	while (true) {
+		cout << endl;
+		cout << "Enter the row # that you would like to see (e.g. 9 or -1 to return to the menu): ";
+		cout.flush();
+
+		string line;
+		getline(cin, line);
+
+		int row = ::stoi(line);
+		if (row == -1) {
+			return;
+		}
+		else if ((row < 1) || (row > NROWS)) {
+			cout << "You have entered an invalid row." << endl;
+			continue;
+		}
+
+		cout << endl;
+
+		for (int col = 0; col < NCOLS; col++) {
+			const Seat_ptr& seat = _theater.getSeat(row - 1, col);
+			cout << " " << row << "," << (col + 1) << " - ";
+			cout << (seat->isAvailable() ? "available" : "occupied");
+			if (seat->isAvailable()) {
+				cout << " - $" << seat->getPrice();
+			}
+			cout << endl;
+		}
+
+		cout << endl;
+		return;
+	}
 }
 
 /// <summary>
@@ -74,9 +117,9 @@ void Kiosk::showSeating() {
 		cout << " | ";
 
 		for (int col = 0; col < NCOLS; col++) {
-			const Seat& seat = _theater.getSeat(row, col);
+			const Seat_ptr& seat = _theater.getSeat(row, col);
 			cout << " ";
-			cout << (seat.isAvailable() ? '#' : '*');
+			cout << (seat->isAvailable() ? '#' : '*');
 			cout << " ";
 		}
 
@@ -90,12 +133,18 @@ void Kiosk::showSeating() {
 /// Shows the # of tickets available.
 /// </summary>
 void Kiosk::showTicketsAvailable() {
+	cout << endl;
+	cout << _theater.getAvailableSeatCount() << " seats are currently available." << endl;
+	cout << endl;
 }
 
 /// <summary>
 /// Shows the # of tickets sold.
 /// </summary>
 void Kiosk::showTicketsSold() {
+	cout << endl;
+	cout <<  _theater.getOccupiedSeatCount() << " seats are currently occupied." << endl;
+	cout << endl;
 }
 
 /// <summary>
@@ -131,8 +180,8 @@ void Kiosk::showPrices() {
 		cout << " |";
 
 		for (int col = 0; col < NCOLS; col++) {
-			const Seat& seat = _theater.getSeat(row, col);
-			cout << "   $" << seat.getPrice();
+			const Seat_ptr& seat = _theater.getSeat(row, col);
+			cout << "   $" << seat->getPrice();
 		}
 
 		cout << endl;
@@ -145,6 +194,56 @@ void Kiosk::showPrices() {
 /// Help the user purchase tickets.
 /// </summary>
 void Kiosk::purchaseTickets() {
+	string exitLine("xx");
+
+	list<Seat_ptr> seatsPurchased;
+
+	while (true) {
+		cout << endl;
+		cout << "Please enter the seat (e.g. 1,3) you would like to purchase." << endl;
+		cout << "    (enter xx to complete this purchase): ";
+		cout.flush();
+
+		string line;
+		getline(cin, line);
+
+		if (line == exitLine) {
+			break;
+		}
+
+		try {
+			Location location = Location::parse(line);
+			if ((location.getRow() < 1) ||
+				(location.getRow() > NROWS) ||
+				(location.getColumn() < 1) ||
+				(location.getColumn() > NCOLS)) {
+				cout << endl;
+				cout << "You have entered an invalid seat." << endl;
+				continue;
+			}
+
+			cout << endl;
+
+			// At this point we have a valid location.  Get the seat.
+			if (!_theater.tryTakeSeat(location)) {
+				cout << "Sorry, but the seat you have asked for is unavailable." << endl;
+				continue;
+			}
+
+			// We have taken the seat.  Add the seat to the list of seats for this group
+			// purchase.
+			seatsPurchased.push_back(_theater.getSeat(location));
+
+			// Let the user know that you have reserved that seat for them.
+			cout << "We have reserved seat " << location << " for you." << endl;
+		}
+		catch (const ParseException& ex) {
+			// TBD
+		}
+	}
+
+	// We need to show summary information about the tickets that have been
+	// purchased in this "purchasing" session.
 }
 
 /// <summary>

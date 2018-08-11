@@ -5,7 +5,10 @@
 /// Initializes a new instance of the <see cref="CTheater"/> class.
 /// </summary>
 
-Theater::Theater() {
+Theater::Theater() 
+	: _seatsOccupied(0)
+{
+	
 	// Each seat in the theater needs to have its own price.  Generally speaking, a theater
 	// has prices that are the most expensive near the front (and center) and least expensive
 	// at the back (and towards the edges).  Here we're going to initialize the prices for
@@ -21,7 +24,7 @@ Theater::Theater() {
 			double rdist = sqrt(xdist * xdist + ydist * ydist);
 			double discount = 1.0 - 0.5 * (rdist / maxdist); // maximum 50% discount based on distance
 			double seatPrice = round(price * discount);
-			_seating[row][col].setPrice(seatPrice);
+			_seating[row][col] = Seat_ptr(new Seat(seatPrice));
 		}
 	}
 }
@@ -35,9 +38,9 @@ Theater::Theater() {
 /// <param name="col">The col.</param>
 /// <returns></returns>
 bool Theater::tryTakeSeat(int row, int col) {
-	Seat& seat = getSeat(row, col);
-	if (seat.tryTake()) {
-		_ticketsSold++;
+	Seat_ptr& seat = getSeat(row, col);
+	if (seat->tryTake()) {
+		_seatsOccupied++;
 		return true;
 	}
 

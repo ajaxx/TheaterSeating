@@ -1,5 +1,7 @@
 #pragma once
 
+#include <memory>
+
 /// <summary>
 /// Represents a single seat in the theater.  Are all seats the same price?
 /// </summary>
@@ -42,5 +44,13 @@ public:
 	/// <summary>
 	/// Initializes a new instance of the <see cref="Seat"/> class.
 	/// </summary>
-	Seat() : _price(0.0), _available(false) {}
+	Seat() : _price(0.0), _available(true) {}
+	
+	/// <summary>
+	/// Initializes a new instance of the <see cref="Seat"/> class.
+	/// </summary>
+	/// <param name="price">The price.</param>
+	Seat(double price) : _price(price), _available(true) {}
 };
+
+typedef std::shared_ptr<Seat> Seat_ptr;
