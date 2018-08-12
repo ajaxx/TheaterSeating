@@ -1,5 +1,7 @@
 #pragma once
 
+#include "Location.h"
+
 #include <memory>
 
 /// <summary>
@@ -9,8 +11,22 @@ class Seat {
 private:
 	double _price;
 	bool _available;
+	Location _location;
 
-public:
+public:	
+	/// <summary>
+	/// Gets the location of the seat.
+	/// </summary>
+	Location & getLocation() { return _location; }
+
+	/// <summary>
+	/// Sets the location of the seat.
+	/// </summary>
+	/// <param name="location">The location.</param>
+	void setLocation(const Location& location) {
+		_location = location;
+	}
+
 	/// <summary>
 	/// Gets the price of the seat.
 	/// </summary>
@@ -44,13 +60,18 @@ public:
 	/// <summary>
 	/// Initializes a new instance of the <see cref="Seat"/> class.
 	/// </summary>
-	Seat() : _price(0.0), _available(true) {}
+	Seat() : _price(0.0), _available(true), _location() {}
 	
 	/// <summary>
 	/// Initializes a new instance of the <see cref="Seat"/> class.
 	/// </summary>
 	/// <param name="price">The price.</param>
-	Seat(double price) : _price(price), _available(true) {}
+	Seat(double price, const Location& location)
+		: _price(price)
+		, _available(true)
+		, _location(location)
+	{
+	}
 };
 
 typedef std::shared_ptr<Seat> Seat_ptr;

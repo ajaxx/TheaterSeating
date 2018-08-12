@@ -24,7 +24,8 @@ Theater::Theater()
 			double rdist = sqrt(xdist * xdist + ydist * ydist);
 			double discount = 1.0 - 0.5 * (rdist / maxdist); // maximum 50% discount based on distance
 			double seatPrice = round(price * discount);
-			_seating[row][col] = Seat_ptr(new Seat(seatPrice));
+			Location location(row + 1, col + 1);
+			_seating[row][col] = std::make_shared<Seat>(seatPrice, Location(row + 1, col + 1));
 		}
 	}
 }

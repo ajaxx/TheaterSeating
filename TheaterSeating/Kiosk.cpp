@@ -4,8 +4,9 @@
 
 #include <iomanip>
 #include <iostream>
-#include <list>
+#include <vector>
 #include <string>
+#include <stdexcept>
 
 using namespace std;
 
@@ -23,11 +24,11 @@ void Kiosk::displayWelcomeMessage() {
 /// </summary>
 void Kiosk::displayHelp() {
 	cout << "Please select an option from the list below:" << endl;
-	cout << "  b - Purchase tickets." << endl;
+	cout << "  b - Purchase seats." << endl;
 	cout << "  r - Display available seating by row." << endl;
 	cout << "  a - Display available seating (theater-wide)." << endl;
-	cout << "  s - Display # of tickets sold." << endl;
-	cout << "  q - Display # of tickets available." << endl;
+	cout << "  s - Display # of seats sold." << endl;
+	cout << "  q - Display # of seats available." << endl;
 	cout << "  p - Display the prices of all seats." << endl;
 	cout << "  x - End the session." << endl;
 	cout << "  ? - Display this message." << endl;
@@ -42,10 +43,73 @@ void Kiosk::displaySummary() {
 	// been sold and how much revenue we have generated.  Lets display some summary information.
 
 	cout << "Thank you for using the theater Kiosk.  Here is a summary of your session." << endl;
-	cout << endl;
+
+	displaySummary(this->_seatsPurchased);
+
 	//cout << _theater.getAvailableSeatCount() << " seats are still available." << endl;
 	//cout << _theater.getOccupiedSeatCount() << " seats are currently occupied." << endl;
 
+}
+
+/// <summary>
+/// Displays the summary information for a set of seats.
+/// </summary>
+void Kiosk::displaySummary(vector<Seat_ptr>& seatsToReview)
+{
+	if (seatsToReview.size() == 0) {
+		cout << "You did not purchase any seats." << endl;
+	}
+	else {
+		std::sort(
+			seatsToReview.begin(),
+			seatsToReview.end(),
+			[](const Seat_ptr& seatA, const Seat_ptr& seatB) {
+			return seatA->getPrice() > seatB->getPrice();
+		});
+
+		cout << endl;
+		cout << "You purchased " << seatsToReview.size() << " seats." << endl;
+		cout << string(40, '-') << endl;
+
+		cout << std::fixed;
+		cout << setprecision(2);
+
+		double totalPrice = 0.0;
+		for (Seat_ptr& seat : seatsToReview) {
+			cout << "  "
+				<< setw(5) << seat->getLocation()
+				<< " - $"
+				<< seat->getPrice()
+				<< endl;
+			totalPrice += seat->getPrice();
+		}
+
+		cout << string(40, '-') << endl;
+		cout << "    Price:  $" << totalPrice << endl;
+		cout << endl;
+	}
+}
+
+bool Kiosk::showSeatingByRow(int row) {
+	if ((row < 1) || (row > NROWS)) {
+		cout << "You have entered an invalid row." << endl;
+		return false;
+	}
+
+	cout << endl;
+
+	for (int col = 0; col < NCOLS; col++) {
+		const Seat_ptr& seat = _theater.getSeat(row - 1, col);
+		cout << " " << row << "," << (col + 1) << " - ";
+		cout << (seat->isAvailable() ? "available" : "occupied");
+		if (seat->isAvailable()) {
+			cout << " - $" << seat->getPrice();
+		}
+		cout << endl;
+	}
+
+	cout << endl;
+	return true;
 }
 
 /// <summary>
@@ -61,29 +125,19 @@ void Kiosk::showSeatingByRow() {
 		string line;
 		getline(cin, line);
 
-		int row = ::stoi(line);
-		if (row == -1) {
-			return;
-		}
-		else if ((row < 1) || (row > NROWS)) {
-			cout << "You have entered an invalid row." << endl;
-			continue;
-		}
-
-		cout << endl;
-
-		for (int col = 0; col < NCOLS; col++) {
-			const Seat_ptr& seat = _theater.getSeat(row - 1, col);
-			cout << " " << row << "," << (col + 1) << " - ";
-			cout << (seat->isAvailable() ? "available" : "occupied");
-			if (seat->isAvailable()) {
-				cout << " - $" << seat->getPrice();
+		try {
+			int row = ::stoi(line);
+			if (row == -1) {
+				return;
 			}
-			cout << endl;
-		}
 
-		cout << endl;
-		return;
+			if (showSeatingByRow(row)) {
+				return;
+			}
+		}
+		catch (const invalid_argument& ex) {
+			cout << "You have entered an invalid row." << endl;
+		}
 	}
 }
 
@@ -105,15 +159,11 @@ void Kiosk::showSeating() {
 	}
 
 	cout << endl;
-	cout << "------+" << string(31, '-') << endl;
+	cout << "------+" << string(3 * NCOLS, '-') << endl;
 
 	// table body
 	for (int row = 0; row < NROWS; row++) {
-		cout << " R " << (row + 1);
-		if (row < 9) {
-			cout << ' ';
-		}
-
+		cout << " R " << setw(2) << (row + 1);
 		cout << " | ";
 
 		for (int col = 0; col < NCOLS; col++) {
@@ -130,18 +180,18 @@ void Kiosk::showSeating() {
 }
 
 /// <summary>
-/// Shows the # of tickets available.
+/// Shows the # of seats available.
 /// </summary>
-void Kiosk::showTicketsAvailable() {
+void Kiosk::showSeatsAvailable() {
 	cout << endl;
 	cout << _theater.getAvailableSeatCount() << " seats are currently available." << endl;
 	cout << endl;
 }
 
 /// <summary>
-/// Shows the # of tickets sold.
+/// Shows the # of seats sold.
 /// </summary>
-void Kiosk::showTicketsSold() {
+void Kiosk::showSeatsSold() {
 	cout << endl;
 	cout <<  _theater.getOccupiedSeatCount() << " seats are currently occupied." << endl;
 	cout << endl;
@@ -163,25 +213,20 @@ void Kiosk::showPrices() {
 	cout << "      |";
 
 	for (int col = 0; col < NCOLS; col++) {
-		cout << string(col < 9 ? 6 : 5, ' ');
-		cout << (col + 1);
+		cout << setw(6) << (col + 1) << ' ';
 	}
 
 	cout << endl;
-	cout << "------+" << string(70, '-') << endl;
+	cout << "------+" << string((7 * NCOLS) - 1, '-') << endl;
 
 	// table body
 	for (int row = 0; row < NROWS; row++) {
-		cout << " R " << (row + 1);
-		if (row < 9) {
-			cout << ' ';
-		}
-
-		cout << " |";
+		cout << " R " << setw(2) << (row + 1);
+		cout << " |  ";
 
 		for (int col = 0; col < NCOLS; col++) {
 			const Seat_ptr& seat = _theater.getSeat(row, col);
-			cout << "   $" << seat->getPrice();
+			cout << "$" << seat->getPrice() << "   ";
 		}
 
 		cout << endl;
@@ -191,12 +236,12 @@ void Kiosk::showPrices() {
 }
 
 /// <summary>
-/// Help the user purchase tickets.
+/// Help the user purchase seats.
 /// </summary>
-void Kiosk::purchaseTickets() {
+void Kiosk::purchaseSeats() {
 	string exitLine("xx");
 
-	list<Seat_ptr> seatsPurchased;
+	vector<Seat_ptr> seatsPurchasedInBatch;
 
 	while (true) {
 		cout << endl;
@@ -230,20 +275,27 @@ void Kiosk::purchaseTickets() {
 				continue;
 			}
 
-			// We have taken the seat.  Add the seat to the list of seats for this group
-			// purchase.
-			seatsPurchased.push_back(_theater.getSeat(location));
+			// We have taken the seat.
+			Seat_ptr& seat = _theater.getSeat(location);
+			// Add the seat to the list of seats for this group.
+			seatsPurchasedInBatch.push_back(seat);
+			// Add the seat to the list of seats for this session.
+			_seatsPurchased.push_back(seat);
 
 			// Let the user know that you have reserved that seat for them.
 			cout << "We have reserved seat " << location << " for you." << endl;
 		}
 		catch (const ParseException& ex) {
-			// TBD
+			cout << endl;
+			cout << "You have entered an invalid seat." << endl;
 		}
 	}
 
-	// We need to show summary information about the tickets that have been
-	// purchased in this "purchasing" session.
+	// We need to inform the user about the seats they have purchased and how much the
+	// transaction (for these seats only) will cost.  For the purpose of making the content
+	// readable, we will sort the results from highest price to lowest price.
+
+	displaySummary(seatsPurchasedInBatch);
 }
 
 /// <summary>
@@ -274,12 +326,14 @@ bool Kiosk::doUserCommand() {
 	// Check the command.
 	// We know that if the enter zero characters it's an error.
 	// We also know that if the enter more than 1 character that it's an error.
-	if (command.length() == 1) {
+	if (command.length() == 0) {
+	}
+	else if (command.length() == 1) {
 		// The first character in the command is all that we need.  We can use
 		// a switch statement to determine which path to take.
 		switch (command[0]) {
 		case 'b':
-			purchaseTickets();
+			purchaseSeats();
 			return true;
 		case 'r':
 			showSeatingByRow();
@@ -288,10 +342,10 @@ bool Kiosk::doUserCommand() {
 			showSeating();
 			return true;
 		case 's':
-			showTicketsSold();
+			showSeatsSold();
 			return true;
 		case 'q':
-			showTicketsAvailable();
+			showSeatsAvailable();
 			return true;
 		case 'x':
 			displaySummary();
@@ -307,6 +361,19 @@ bool Kiosk::doUserCommand() {
 			// We intentionally do nothing with the default case.  It will fall
 			// through and be handled as an invalid input.
 			break;
+		}
+	}
+	else {
+		switch (command[0]) {
+		case 'r':
+			try {
+				showSeatingByRow(::stoi(command.substr(1)));
+			}
+			catch (const invalid_argument& ex) {
+				cout << "You have entered an invalid row." << endl;
+			}
+
+			return true;
 		}
 	}
 

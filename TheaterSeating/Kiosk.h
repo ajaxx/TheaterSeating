@@ -1,6 +1,9 @@
 #pragma once
 
+#include "Seat.h"
 #include "Theater.h"
+
+#include <vector>
 
 /// <summary>
 /// Represents a kiosk that provides a user with the ability to purchase tickets
@@ -9,6 +12,7 @@
 class Kiosk {
 private:
 	Theater _theater;
+	vector<Seat_ptr> _seatsPurchased;
 
 public:
 	/// <summary>
@@ -24,6 +28,15 @@ public:
 	/// </summary>
 	void displaySummary();
 	/// <summary>
+	/// Displays the summary information for a set of seats.
+	/// </summary>
+	void displaySummary(vector<Seat_ptr>& seatsToReview);	
+	/// <summary>
+	/// Shows the seating by row.
+	/// </summary>
+	/// <param name="row">The row.</param>
+	bool showSeatingByRow(int row);
+	/// <summary>
 	/// Shows the seating by row.
 	/// </summary>
 	void showSeatingByRow();
@@ -34,11 +47,11 @@ public:
 	/// <summary>
 	/// Shows the # of tickets available.
 	/// </summary>
-	void showTicketsAvailable();
+	void showSeatsAvailable();
 	/// <summary>
 	/// Shows the # of tickets sold.
 	/// </summary>
-	void showTicketsSold();	
+	void showSeatsSold();	
 	/// <summary>
 	/// Shows the prices of all seats.
 	/// </summary>
@@ -46,7 +59,7 @@ public:
 	/// <summary>
 	/// Help the user purchase tickets.
 	/// </summary>
-	void purchaseTickets();
+	void purchaseSeats();
 	/// <summary>
 	/// Displays a messge when an invalid option is chosen.
 	/// </summary>

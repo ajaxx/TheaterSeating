@@ -8,7 +8,7 @@
 using namespace std;
 
 #define NROWS 10
-#define NCOLS 10
+#define NCOLS 9
 
 /// <summary>
 /// This class represents the theater.
@@ -16,11 +16,11 @@ using namespace std;
 class Theater {
 private:
 	/// <summary>
-	/// the theater is a 10x10 matrix of seats.  This structure simply
+	/// the theater is a 10x9 matrix of seats.  This structure simply
 	/// represents the seats in the theater.  Given a seat, you can
 	/// get information about its price or availability.
 	/// </summary>
-	array<array<Seat_ptr, NROWS>, NCOLS> _seating;	
+	array<array<Seat_ptr, NCOLS>, NROWS> _seating;	
 	/// <summary>
 	/// The # of tickets sold.
 	/// </summary>
@@ -31,7 +31,7 @@ public:
 	/// Returns the # of tickets available.
 	/// </summary>
 	inline int getAvailableSeatCount() const {
-		return 100 - _seatsOccupied;
+		return NROWS * NCOLS - _seatsOccupied;
 	}
 	
 	/// <summary>
