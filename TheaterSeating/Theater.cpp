@@ -2,11 +2,6 @@
 // Instructor: R. Bradley Andrews
 // Class: PRG/410
 // Group: Team-A
-//
-// Contributing Members:
-//    Aaron Jackson
-//    Rudy Pena
-//    Troy Shannon
 ////////////////////////////////////////////////////////////////////////////////
 
 #include "stdafx.h"

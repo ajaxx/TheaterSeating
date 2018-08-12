@@ -21,17 +21,17 @@
     <ClInclude Include="targetver.h">
       <Filter>Header Files</Filter>
     </ClInclude>
+    <ClInclude Include="Theater.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
     <ClInclude Include="Seat.h">
-      <Filter>Source Files</Filter>
+      <Filter>Header Files</Filter>
     </ClInclude>
     <ClInclude Include="Location.h">
-      <Filter>Source Files</Filter>
-    </ClInclude>
-    <ClInclude Include="Theater.h">
-      <Filter>Source Files</Filter>
+      <Filter>Header Files</Filter>
     </ClInclude>
     <ClInclude Include="Kiosk.h">
-      <Filter>Source Files</Filter>
+      <Filter>Header Files</Filter>
     </ClInclude>
   </ItemGroup>
   <ItemGroup>
