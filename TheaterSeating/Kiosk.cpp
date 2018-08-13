@@ -37,7 +37,7 @@ void Kiosk::displayHelp() {
 	cout << "  q - Display # of seats available." << endl;
 	cout << "  p - Display the prices of all seats." << endl;
 	cout << "  x - End the session." << endl;
-	cout << "  ? - Display this message." << endl;
+	cout << "  ? - Display this menu." << endl;
 	cout << endl;
 }
 
